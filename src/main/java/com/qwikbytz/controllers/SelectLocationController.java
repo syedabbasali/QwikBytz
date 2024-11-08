@@ -26,7 +26,7 @@ public class SelectLocationController {
             return ResponseEntity.noContent().build();  // HTTP 204
         }
 
-        return ResponseEntity.ok(countries);  // HTTP 200
+        return ResponseEntity.ok(countries);  // HTTP 200 Error
     }
 
     @GetMapping("/selectlocation/state")
