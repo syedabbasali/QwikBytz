@@ -3,10 +3,10 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch (change if using a different branch)
+      - main  # Trigger on push to the main branch
   pull_request:
     branches:
-      - main  # Trigger on pull request to main branch
+      - main  # Trigger on pull request to the main branch
 
 jobs:
   build:
@@ -14,21 +14,29 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # Check out the code in the repository
+        uses: actions/checkout@v2  # Check out the code from the repository
 
       - name: Set up JDK 11
-        uses: actions/setup-java@v2  # Set up the Java environment
+        uses: actions/setup-java@v2  # Set up Java environment
         with:
           java-version: '11'  # Specify Java 11
-          distribution: 'adoptopenjdk'  # You can also use 'openjdk' or 'zulu', but 'adoptopenjdk' is a common choice
+          distribution: 'temurin'  # Use Eclipse Adoptium (formerly AdoptOpenJDK)
+          java-package: 'jdk'  # Install JDK (not JRE)
+          architecture: 'x64'  # Architecture type (64-bit)
+          check-latest: false  # Do not check for the latest version
+          server-id: 'github'  # Use GitHub repository for server credentials
+          server-username: ${{ github.actor }}  # GitHub actor (username)
+          server-password: ${{ github.token }}  # GitHub token for authentication
+          overwrite-settings: true  # Overwrite existing settings if they exist
+          job-status: 'success'  # Set job status to success if the task completes successfully
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests=true  # Compile and package the application, skipping tests for faster builds
+        run: mvn clean install -DskipTests=true  # Compile and package the application, skipping tests
 
       - name: Run tests
-        run: mvn test  # Run the unit tests to ensure everything works correctly
+        run: mvn test  # Run the unit tests to verify functionality
 
-      - name: Build Docker image (optional)
+          - name: Build Docker image (optional)
         run: |
           docker build -t my-springboot-app .
           docker tag my-springboot-app myusername/my-springboot-app:latest
